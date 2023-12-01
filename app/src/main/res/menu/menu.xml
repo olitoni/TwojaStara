@@ -13,7 +13,8 @@
         android:layout_height="wrap_content"
         android:icon="@drawable/baseline_home_24"
         android:id="@+id/home"
-        android:title="Home" />
+        android:title="Home"
+        />
     <item
         android:id="@+id/water"
         android:layout_width="wrap_content"

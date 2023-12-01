@@ -5,12 +5,12 @@ plugins {
 
 android {
     namespace = "com.example.twojastara"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.twojastara"
         minSdk = 26
-        targetSdk = 34
+        targetSdk = 33
         versionCode = 1
         versionName = "1.0"
 
