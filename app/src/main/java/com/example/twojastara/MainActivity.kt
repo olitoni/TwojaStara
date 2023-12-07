@@ -2,38 +2,29 @@ package com.example.twojastara
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.twojastara.databinding.ActivityMainBinding
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
 
-
+lateinit var tabLayout: TabLayout
+lateinit var viewPager: ViewPager
 class MainActivity : AppCompatActivity() {
-    private lateinit var binding : ActivityMainBinding
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//
-//
-//        binding = ActivityMainBinding.inflate(layoutInflater)
-//        setContentView(binding.root)
-//
-//        binding.bottomNavigationView.setOnItemSelectedListener {
-//            when(it.itemId) {
-//                R.id.home -> replaceFragment(Home())
-//                else -> {
-//
-//                }
-//            }
-//            true
-//        }
-//
-//        val bottomNav = findViewById<View>(R.id.bottomNavigationView) as BottomNavigationView
-//        bottomNav.menu.findItem(R.id.home).setChecked(true)
-//
-//        replaceFragment(Home())
-    }
+        setContentView(R.layout.activity_main)
 
-//    private fun replaceFragment(fragment: Fragment) {
-//        val fragmentManager = supportFragmentManager
-//        val fragmentTransaction = fragmentManager.beginTransaction()
-//        fragmentTransaction.replace(R.id.frame, fragment)
-//        fragmentTransaction.commit()
-//    }
-}
+        tabLayout = findViewById(R.id.bottomNav)
+        viewPager = findViewById(R.id.viewPager)
+        tabLayout.tabGravity = TabLayout.GRAVITY_FILL
+        val adapter = Adapter(this, supportFragmentManager,
+            tabLayout.tabCount)
+        viewPager.adapter = adapter
+        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                viewPager.currentItem = tab.position
+            }
+            override fun onTabUnselected(tab: TabLayout.Tab) {}
+            override fun onTabReselected(tab: TabLayout.Tab) {}
+        })
+        }
+    }
