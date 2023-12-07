@@ -13,17 +13,18 @@
         app:layout_constraintBottom_toTopOf="@+id/bottomNav"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"></androidx.viewpager.widget.ViewPager>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/bottomNav"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:theme="@style/Theme.TwojaStara.BottomNav"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        style="@style/Widget.Material3.TabLayout">
+        style="@style/Widget.Material3.TabLayout"
+        android:background="@color/bottomNavBg">
+
         <com.google.android.material.tabs.TabItem
             android:layout_width="match_parent"
             android:layout_height="match_parent"
