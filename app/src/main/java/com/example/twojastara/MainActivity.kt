@@ -16,6 +16,7 @@ class MainActivity : AppCompatActivity() {
         tabLayout = findViewById(R.id.bottomNav)
         viewPager = findViewById(R.id.viewPager)
         tabLayout.tabGravity = TabLayout.GRAVITY_FILL
+
         val adapter = Adapter(
             this, supportFragmentManager,
             tabLayout.tabCount
@@ -30,5 +31,6 @@ class MainActivity : AppCompatActivity() {
             override fun onTabUnselected(tab: TabLayout.Tab) {}
             override fun onTabReselected(tab: TabLayout.Tab) {}
         })
+        viewPager.currentItem = 1
     }
 }

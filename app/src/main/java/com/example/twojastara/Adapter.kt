@@ -7,7 +7,7 @@ import androidx.fragment.app.FragmentPagerAdapter
 
 internal class Adapter(
     var context: Context,
-    fm: FragmentManager,
+    private var fm: FragmentManager,
     private var totalTabs: Int
 ) :
     FragmentPagerAdapter(fm) {
@@ -18,7 +18,7 @@ internal class Adapter(
             }
 
             1 -> {
-                fragment2()
+                fragmentHome()
             }
 
             2 -> {
