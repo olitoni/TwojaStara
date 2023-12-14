@@ -3,7 +3,8 @@
     <style name="Base.Theme.TwojaStara" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your night theme here. -->
     </style>
-    <style name="Theme.TwojaStara" parent="Base.Theme.TwojaStara" />
+    <style name="Theme.TwojaStara" parent="Base.Theme.TwojaStara">
+    </style>
 
     <style name="Theme.TwojaStara.BottomNav" parent="Theme.MaterialComponents">
         <item name="colorPrimary">@color/material_dynamic_primary40</item>

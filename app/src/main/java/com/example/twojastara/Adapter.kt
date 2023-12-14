@@ -18,7 +18,7 @@ internal class Adapter(
             }
 
             1 -> {
-                fragmentHome()
+                home()
             }
 
             2 -> {
