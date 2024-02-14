@@ -14,7 +14,7 @@ internal class Adapter(
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                fragment1()
+                calendar()
             }
 
             1 -> {
