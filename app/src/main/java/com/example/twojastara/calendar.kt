@@ -1,18 +1,19 @@
 package com.example.twojastara
 
+import EventAdapter
+import android.R
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.ListView
-import java.util.Calendar
+import android.widget.ImageView
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager.widget.ViewPager
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
+
+lateinit var recyclerView: RecyclerView
 
 /**
  * A simple [Fragment] subclass.
@@ -20,27 +21,33 @@ private const val ARG_PARAM2 = "param2"
  * create an instance of this fragment.
  */
 class calendar : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_calendar, container, false)
-        val lv = R.id.listView as ListView
-        val adapter = ArrayAdapter(this.requireContext(), android.R.layout.activity_list_item,listOf("car", "plane"))
-        lv.adapter = adapter
+        val root = inflater.inflate(com.example.twojastara.R.layout.fragment_calendar, container, false)
+        recyclerView = root.findViewById(com.example.twojastara.R.id.recyclerView)!!
+        val eventList = mutableListOf<EventItem>()
+
+        for (i in 1..15){
+            val name = "Item $i"
+            val desc = "desc $i"
+
+            val foodItem = EventItem(name = name, desc = desc)
+
+
+            eventList.add(foodItem)
+        }
+
+        val adapter = EventAdapter(this.requireContext(), eventList)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
+
+        return root;
     }
 
     companion object {
@@ -56,10 +63,6 @@ class calendar : Fragment() {
         @JvmStatic
         fun newInstance(param1: String, param2: String) =
             calendar().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
             }
     }
 }
