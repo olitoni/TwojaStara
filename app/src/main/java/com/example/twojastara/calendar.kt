@@ -1,19 +1,19 @@
 package com.example.twojastara
 
 import EventAdapter
-import android.R
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager.widget.ViewPager
+import com.prolificinteractive.materialcalendarview.CalendarDay
+import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 
 
 lateinit var recyclerView: RecyclerView
+lateinit var materialCalendarView: MaterialCalendarView
 
 /**
  * A simple [Fragment] subclass.
@@ -30,8 +30,11 @@ class calendar : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(com.example.twojastara.R.layout.fragment_calendar, container, false)
-        recyclerView = root.findViewById(com.example.twojastara.R.id.recyclerView)!!
+        recyclerView = root.findViewById(com.example.twojastara.R.id.recyclerView)
+        materialCalendarView = root.findViewById(com.example.twojastara.R.id.calendarView)
         val eventList = mutableListOf<EventItem>()
+
+        materialCalendarView.addDecorator(CurrentDayDecorator())
 
         for (i in 1..15){
             val name = "Item $i"
@@ -42,6 +45,10 @@ class calendar : Fragment() {
 
             eventList.add(foodItem)
         }
+
+//        val dates = ArrayList<CalendarDay>()
+//        val mydate= CalendarDay.from(2024,  2, 4)
+//        dates.add(mydate)
 
         val adapter = EventAdapter(this.requireContext(), eventList)
         recyclerView.adapter = adapter
