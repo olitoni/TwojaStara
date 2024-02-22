@@ -1,5 +1,6 @@
 package com.example.twojastara
 
+import DBHelper
 import EventAdapter
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,6 +44,9 @@ class calendar : Fragment() {
 //        val dates = ArrayList<CalendarDay>()
 //        val mydate= CalendarDay.from(2024,  2, 4)
 //        dates.add(mydate)
+
+        val db = DBHelper(this.requireContext(), null)
+        db.addName("hej", "ddddddddate")
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
