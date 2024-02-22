@@ -1,10 +1,12 @@
 package com.example.twojastara
 
 import EventAdapter
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,7 +14,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 
 
 lateinit var recyclerView: RecyclerView
-lateinit var materialCalendarView: MaterialCalendarView
+lateinit var mcv: MaterialCalendarView
 
 class calendar : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,9 +26,13 @@ class calendar : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val root = inflater.inflate(R.layout.fragment_calendar, container, false)
-        materialCalendarView = root.findViewById(R.id.calendarView)
-        materialCalendarView.addDecorator(CurrentDayDecorator(activity))
+        mcv = root.findViewById(R.id.calendarView)
+        mcv.selectionColor = Color.parseColor("#51FFFFFF")
+        mcv.addDecorator(CurrentDayDecorator(activity))
         recyclerView = root.findViewById(R.id.recyclerView)
+
+        mcv.setOnDateChangedListener { _, date, _ -> Toast.makeText(context, date.toString(), Toast.LENGTH_SHORT).show() }
+
         val eventList = mutableListOf<EventItem>()
         val adapter = EventAdapter(this.requireContext(), eventList)
 
@@ -47,13 +53,9 @@ class calendar : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
 
-        return root;
+        return root
     }
 
     companion object {
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            calendar().apply {
-            }
     }
 }
