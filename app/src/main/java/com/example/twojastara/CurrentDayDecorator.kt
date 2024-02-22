@@ -1,36 +1,27 @@
-package com.prolificinteractive.materialcalendarview.sample.decorators
+package com.example.twojastara
 
-import android.graphics.Typeface
-import android.text.style.RelativeSizeSpan
-import android.text.style.StyleSpan
-import android.text.style.UnderlineSpan
+import android.graphics.drawable.Drawable
+import android.text.style.ForegroundColorSpan
+import androidx.core.content.ContextCompat
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
-import java.time.LocalDate
+import android.app.Activity
+import android.graphics.Color
 
-/**
- * Decorate a day by making the text big and bold
- */
-class OneDayDecorator : DayViewDecorator {
-    private var date: CalendarDay?
-
-    init {
-        date = CalendarDay.today()
-    }
+class CurrentDayDecorator(context: Activity?): DayViewDecorator {
+    private var date: CalendarDay? = CalendarDay.today()
+    private val drawable: Drawable?
 
     override fun shouldDecorate(day: CalendarDay): Boolean {
         return date != null && day == date
     }
 
     override fun decorate(view: DayViewFacade) {
-        view.addSpan(UnderlineSpan())
+        view.addSpan(ForegroundColorSpan(Color.BLACK))
+        view.setBackgroundDrawable(drawable!!)
     }
-
-    /**
-     * We're changing the internals, so make sure to call [MaterialCalendarView.invalidateDecorators]
-     */
-    fun setDate(date: LocalDate?) {
-        this.date = CalendarDay.today()
+    init {
+        drawable = ContextCompat.getDrawable(context!!, R.drawable.current_day)
     }
 }
