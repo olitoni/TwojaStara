@@ -14,15 +14,15 @@ internal class Adapter(
     override fun getItem(position: Int): Fragment {
         return when (position) {
             0 -> {
-                calendar()
+                CalendarFragment()
             }
 
             1 -> {
-                home()
+                Home()
             }
 
             2 -> {
-                fragment3()
+                Water()
             }
 
             else -> getItem(position)
