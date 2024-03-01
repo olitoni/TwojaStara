@@ -4,6 +4,7 @@ import EventAdapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,6 +17,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.timepicker.MaterialTimePicker
+import com.google.android.material.timepicker.TimeFormat.CLOCK_24H
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
 import java.util.Calendar
@@ -56,7 +59,6 @@ class CalendarFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
 
         fab.setOnClickListener { view ->
-//            db.sql("INSERT INTO Events VALUES(null, 'Event', 'data')")
 //            eventList.clear()
 //            fetchEvents(db, eventList)
 //            recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
@@ -68,14 +70,20 @@ class CalendarFragment : Fragment() {
             val nameInput = dialogLayout.findViewById<EditText>(R.id.nameInput)
             val descriptionInput = dialogLayout.findViewById<EditText>(R.id.descriptionInput)
             val dateInput = dialogLayout.findViewById<EditText>(R.id.dateInput)
+            val timeInput = dialogLayout.findViewById<EditText>(R.id.timeInput)
 
             dateInput.setOnClickListener {
                 datepickerDialog(dateInput)
             }
 
+            timeInput.setOnClickListener {
+                timepickerDialog(timeInput)
+            }
+
             builder.setView(dialogLayout)
             builder.setPositiveButton("Add") { _, _ ->
-                Snackbar.make(view, "Dodano", Snackbar.LENGTH_LONG)
+                db.sql("INSERT INTO Events VALUES(null, '${nameInput.text}', '${descriptionInput.text}', '${dateInput.text}', '${timeInput.text}');")
+                Snackbar.make(view, "Added event", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
                     .show()
             }
@@ -109,6 +117,28 @@ class CalendarFragment : Fragment() {
         datePickerDialog.show()
     }
 
+    private fun timepickerDialog(timeInput: EditText) {
+        val c = Calendar.getInstance()
+        val _hour = c.get(Calendar.HOUR)
+        val _minute = c.get(Calendar.MINUTE)
+
+        MaterialTimePicker.Builder()
+            .setTimeFormat(CLOCK_24H)
+            .setHour(_hour)
+            .setMinute(_minute)
+            .setTitleText("Set time")
+            .build()
+            .apply {
+                addOnPositiveButtonClickListener {
+                    timeInput.setText(
+                        hour.toString().padStart(2, '0') + ":" + minute.toString().padStart(2, '0')
+                    )
+                }
+            }
+            .show(parentFragmentManager, "Calendar")
+    }
+
+
     private fun fetchEvents(
         db: DBHelper,
         eventList: MutableList<EventItem>
@@ -117,7 +147,7 @@ class CalendarFragment : Fragment() {
         if (cursor!!.moveToFirst()) {
             do {
                 val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                val age = cursor.getString(cursor.getColumnIndexOrThrow("age"))
+                val age = cursor.getString(cursor.getColumnIndexOrThrow("date"))
                 val event = EventItem(name = name, desc = age)
                 eventList.add(event)
             } while (cursor.moveToNext())
