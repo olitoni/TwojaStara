@@ -32,6 +32,8 @@ class EventAdapter(private val context: Context, private val foodItemList:Mutabl
         fun bind(eventItem: EventItem){
             binding.eventName.text = eventItem.name
             binding.eventDesc.text = eventItem.desc
+            binding.eventDate.text = eventItem.date
+            binding.eventTime.text = eventItem.time
         }
 
     }

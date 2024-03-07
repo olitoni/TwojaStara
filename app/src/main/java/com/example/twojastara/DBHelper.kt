@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper
 class DBHelper(context: Context, factory: SQLiteDatabase.CursorFactory?) :
     SQLiteOpenHelper(context, DATABASE_NAME, factory, DATABASE_VERSION) {
     override fun onCreate(db: SQLiteDatabase) {
-        val query = ("CREATE TABLE Events (id INTEGER PRIMARY KEY, name TEXT, description TEXT, date TEXT, time TEXT);")
+        val query = ("CREATE TABLE Events (id INTEGER PRIMARY KEY, name TEXT, description TEXT, date DATE, time TIME);")
         db.execSQL(query)
     }
 

@@ -4,7 +4,6 @@ import EventAdapter
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DatePickerDialog
-import android.app.TimePickerDialog
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,6 +20,8 @@ import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat.CLOCK_24H
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView
+import com.prolificinteractive.materialcalendarview.sample.decorators.EventDecorator
+import java.time.LocalDate
 import java.util.Calendar
 
 
@@ -48,21 +49,33 @@ class CalendarFragment : Fragment() {
         fab = root.findViewById(R.id.fab)
 
         mcv.selectionColor = Color.parseColor("#20FFFFFF")
-        mcv.addDecorator(CurrentDayDecorator(activity))
         mcv.selectedDate = CalendarDay.today()
+        mcv.addDecorator(CurrentDayDecorator(activity))
         mcv.setOnDateChangedListener { _, date, _ ->
-            Toast.makeText(context, date.toString(), Toast.LENGTH_SHORT).show()
+            val monthString = date.month.toString().padStart(2, '0')
+            val dayString = date.day.toString().padStart(2, '0')
+            val dateString = "${date.year}-${monthString}-${dayString}"
+
+            refreshEvents(eventList, db, dateString, adapter)
+
         }
 
-        fetchEvents(db, eventList)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
+        val cursor = db.query("SELECT date FROM Events")
+        if (cursor!!.moveToFirst()) {
+            do {
+                val date = cursor.getString(0)
+                val localDate = LocalDate.parse(date)
+                mcv.addDecorator(
+                    EventDecorator(
+                        Color.RED,
+                        CalendarDay.from(localDate.year, localDate.monthValue, localDate.dayOfMonth)
+                    )
+                )
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
 
         fab.setOnClickListener { view ->
-//            eventList.clear()
-//            fetchEvents(db, eventList)
-//            recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
-
             val builder = AlertDialog.Builder(this.requireContext())
             val inflater = layoutInflater
             builder.setTitle("Add Event")
@@ -73,19 +86,24 @@ class CalendarFragment : Fragment() {
             val timeInput = dialogLayout.findViewById<EditText>(R.id.timeInput)
 
             dateInput.setOnClickListener {
-                datepickerDialog(dateInput)
+                val c = Calendar.getInstance()
+                datepickerDialog(dateInput, c)
             }
 
             timeInput.setOnClickListener {
-                timepickerDialog(timeInput)
+                val c = Calendar.getInstance()
+                timepickerDialog(timeInput, c)
             }
 
             builder.setView(dialogLayout)
             builder.setPositiveButton("Add") { _, _ ->
                 db.sql("INSERT INTO Events VALUES(null, '${nameInput.text}', '${descriptionInput.text}', '${dateInput.text}', '${timeInput.text}');")
-                Snackbar.make(view, "Added event", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "Dodano", Snackbar.LENGTH_LONG)
                     .setAction("Action", null)
                     .show()
+
+                    refreshEvents(eventList, db, dateInput.text.toString(), adapter)
+
             }
             builder.setNegativeButton("Cancel") { dialogInterface, i ->
                 dialogInterface.dismiss()
@@ -96,36 +114,54 @@ class CalendarFragment : Fragment() {
         return root
     }
 
-    private fun datepickerDialog(dateInput: EditText) {
-        val c = Calendar.getInstance()
-        val year = c.get(Calendar.YEAR)
-        val month = c.get(Calendar.MONTH)
-        val day = c.get(Calendar.DAY_OF_MONTH)
+    private fun refreshEvents(
+        eventList: MutableList<EventItem>,
+        db: DBHelper,
+        dateString: String,
+        adapter: EventAdapter
+    ) {
+        eventList.clear()
+        val cursor =
+            db.query("SELECT name, description, time FROM Events WHERE date = '${dateString}';")
+        if (cursor!!.moveToFirst()) {
+            do {
+                val name = cursor.getString(0)
+                val desc = cursor.getString(1)
+                val time = cursor.getString(2)
+                val event = EventItem(name = name, desc = desc, date = dateString, time = time)
+                eventList.add(event)
+            } while (cursor.moveToNext())
+        }
+        cursor.close()
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(this.requireContext())
+    }
 
+    private fun datepickerDialog(dateInput: EditText, calendar: Calendar) {
         val datePickerDialog = DatePickerDialog(
             this.requireContext(),
-            { view, year, monthOfYear, dayOfMonth ->
+            { _, year, monthOfYear, dayOfMonth ->
                 val dat =
-                    (dayOfMonth.toString().padStart(2, '0') + "." + (monthOfYear + 1).toString()
-                        .padStart(2, '0') + "." + year)
+                    "${year}-${
+                        (monthOfYear + 1).toString().padStart(2, '0')
+                    }-${dayOfMonth.toString().padStart(2, '0')}"
                 dateInput.setText(dat)
             },
-            year,
-            month,
-            day
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH)
         )
         datePickerDialog.show()
     }
 
-    private fun timepickerDialog(timeInput: EditText) {
+    private fun timepickerDialog(timeInput: EditText, calendar: Calendar) {
         val c = Calendar.getInstance()
-        val _hour = c.get(Calendar.HOUR)
-        val _minute = c.get(Calendar.MINUTE)
+
 
         MaterialTimePicker.Builder()
             .setTimeFormat(CLOCK_24H)
-            .setHour(_hour)
-            .setMinute(_minute)
+            .setHour(c.get(Calendar.HOUR))
+            .setMinute(c.get(Calendar.MINUTE))
             .setTitleText("Set time")
             .build()
             .apply {
@@ -136,23 +172,6 @@ class CalendarFragment : Fragment() {
                 }
             }
             .show(parentFragmentManager, "Calendar")
-    }
-
-
-    private fun fetchEvents(
-        db: DBHelper,
-        eventList: MutableList<EventItem>
-    ) {
-        val cursor = db.query("SELECT * FROM Events")
-        if (cursor!!.moveToFirst()) {
-            do {
-                val name = cursor.getString(cursor.getColumnIndexOrThrow("name"))
-                val age = cursor.getString(cursor.getColumnIndexOrThrow("date"))
-                val event = EventItem(name = name, desc = age)
-                eventList.add(event)
-            } while (cursor.moveToNext())
-        }
-        cursor.close()
     }
 
     companion object {

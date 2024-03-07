@@ -4,22 +4,18 @@ import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
 import com.prolificinteractive.materialcalendarview.DayViewFacade
 import com.prolificinteractive.materialcalendarview.spans.DotSpan
-
-/**
- * Decorate several days with a dot
- */
-class EventDecorator(private val color: Int, dates: Collection<CalendarDay>?) : DayViewDecorator {
-    private val dates: HashSet<CalendarDay>
+class EventDecorator(private val color: Int, date: CalendarDay) : DayViewDecorator {
+    private var date: CalendarDay
 
     init {
-        this.dates = HashSet(dates)
+        this.date = date
     }
 
     override fun shouldDecorate(day: CalendarDay): Boolean {
-        return dates.contains(day)
+        return date == day
     }
 
     override fun decorate(view: DayViewFacade) {
-        view.addSpan(DotSpan(5f, color))
+        view.addSpan(DotSpan(8f, color))
     }
 }

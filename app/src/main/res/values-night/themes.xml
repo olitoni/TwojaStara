@@ -2,12 +2,15 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.TwojaStara" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your night theme here. -->
+<!--        <item name="backgroundColor">@color/black</item>-->
+<!--        <item name="background">@color/black</item>-->
+
     </style>
     <style name="Theme.TwojaStara" parent="Base.Theme.TwojaStara">
+
     </style>
 
     <style name="Theme.TwojaStara.BottomNav" parent="Theme.MaterialComponents">
-<!--        <item name="colorPrimary"></item>-->
     </style>
 
     </resources>
